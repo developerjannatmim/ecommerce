@@ -28,6 +28,10 @@
             margin-top: 30px;
             border: 3px solid white;
         }
+        .tr
+        {
+            border: 2px solid white;
+        }
     </style>
 </head>
 
@@ -90,7 +94,7 @@
                     @foreach ($data as $data)
 
 
-                    <tr>
+                    <tr class="tr">
                         <td>{{$data->category_name}}</td>
                         <td>
                             <a onclick="return confirm('Are you sure ?')" class="btn btn-danger" href="{{url('delete_category',$data->id)}}">Delete</a>

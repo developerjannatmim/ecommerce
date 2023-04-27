@@ -9,11 +9,15 @@ use App\Models\User;
 use UserType;
 use App\Models\Product;
 use App\Models\Cart;
+use App\Models\Order;
+use Session;
+use Stripe;
 
 class HomeController extends Controller
 {
 
-    public function index(){
+    public function index()
+    {
         $product = Product::paginate(6);
        return view('home.userpage',compact('product'));
     }
@@ -73,7 +77,8 @@ class HomeController extends Controller
         }
     }
 
-    public function show_cart(){
+    public function show_cart()
+    {
 
         if(Auth::id()){
 
@@ -87,18 +92,92 @@ class HomeController extends Controller
     }
 }
 
-public function remove_cart($id){
+public function remove_cart($id)
+{
     $cart = cart::find($id);
     $cart->delete();
     return redirect()->back()->with('message', 'Product deleted Successfully');
 }
 
 
-public function cash_order(){
+public function cash_order()
+{
     $user = Auth::user();
     $userid = $user->id;
     $data = cart::where('user_id','=',$userid)->get();
-    dd($data);
+
+    foreach($data as $data1)
+    {
+        $order= new order;
+        $order->name = $data1->name;
+        $order->email = $data1->email;
+        $order->phone = $data1->phone;
+        $order->address = $data1->address;
+        $order->user_id = $data1->user_id;
+        $order->product_title = $data1->product_title;
+        $order->price= $data1->price;
+        $order->quantity = $data1->quantity;
+        $order->image = $data1->image;
+        $order->product_id = $data1->Prduct_id;
+        $order->payment_status = 'cash on delivery';
+        $order->delivery_status = 'processing';
+
+        $order->save();
+        $cart_id = $data1->id;
+        $cart = cart::find($cart_id);
+        $cart->delete();
+
+    }
+
+    return redirect()->back()->with('message', 'we have received your order. we will connect with you soon...');
+
 }
 
+public function stripe($totalprice)
+{
+    return view('home.stripe',compact('totalprice'));
+}
+
+public function stripePost(Request $request,$totalprice)
+    {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        Stripe\Charge::create ([
+                "amount" => $totalprice * 100,
+                "currency" => "usd",
+                "source" => $request->stripeToken,
+                "description" => "Thanks for Payment."
+        ]);
+
+        $user = Auth::user();
+    $userid = $user->id;
+    $data = cart::where('user_id','=',$userid)->get();
+
+    foreach($data as $data1)
+    {
+        $order= new order;
+        $order->name = $data1->name;
+        $order->email = $data1->email;
+        $order->phone = $data1->phone;
+        $order->address = $data1->address;
+        $order->user_id = $data1->user_id;
+        $order->product_title = $data1->product_title;
+        $order->price= $data1->price;
+        $order->quantity = $data1->quantity;
+        $order->image = $data1->image;
+        $order->product_id = $data1->Prduct_id;
+        $order->payment_status = 'Paid';
+        $order->delivery_status = 'processing';
+
+        $order->save();
+        $cart_id = $data1->id;
+        $cart = cart::find($cart_id);
+        $cart->delete();
+
+    }
+
+        Session::flash('success', 'Payment successful!');
+
+        return back();
+    }
 }

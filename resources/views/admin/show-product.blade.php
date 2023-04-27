@@ -35,6 +35,10 @@
         {
             padding: 20px;
         }
+        .tr
+        {
+            border: 2px solid white;
+        }
 
     </style>
   </head>
@@ -89,7 +93,7 @@
                     @foreach ($product as $product)
 
 
-                    <tr>
+                    <tr class="tr">
                         <td>{{$product->title}}</td>
                         <td>{{$product->description}}</td>
                         <td>{{$product->quantity}}</td>
