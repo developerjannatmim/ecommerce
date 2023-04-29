@@ -24,7 +24,7 @@
         }
 
         .one {
-            background: yellowgreen;
+            background: rgb(255, 246, 122);
 
         }
 
@@ -75,6 +75,15 @@
 
                 <h1 class="title_deg">All Orders</h1>
 
+                <div style="text-align: center; padding-bottom: 30px">
+                    <form action="{{url('search')}}" method="get">
+
+                        <input style="color: black" type="text" name="search" placeholder="Search for something">
+                        <input type="submit" value="Search" class="btn btn-primary">
+
+                    </form>
+                </div>
+
                 <table class="table_deg">
                     <tr class="one">
                         <th>Name</th>
@@ -89,9 +98,10 @@
                         <th>Image</th>
                         <th>Delivered</th>
                         <th>Print PDF</th>
+                        <th>Send Email</th>
                     </tr>
 
-                    @foreach ($order as $allorder)
+                    @forelse ($order as $allorder)
                         <tr class="tr">
                             <td>{{ $allorder->name }}</td>
                             <td>{{ $allorder->email }}</td>
@@ -117,8 +127,20 @@
                             <td>
                                 <a href="{{url('print_pdf',$allorder->id)}}" class="btn btn-secondary">Print PDF</a>
                             </td>
+                            <td>
+                                <a href="{{url('send_email',$allorder->id)}}" class="btn btn-secondary">Send Email</a>
+                            </td>
                         </tr>
-                    @endforeach
+
+                        @empty
+
+                        <tr>
+                            <td colspan="16">
+                                No Data Found
+                            </td>
+                        </tr>
+
+                    @endforelse
                 </table>
             </div>
         </div>

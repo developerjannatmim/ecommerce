@@ -5,6 +5,15 @@
              Our <span>products</span>
           </h2>
        </div>
+
+       <div style="padding-left: 30%">
+        <form action="{{url('product_search')}}" method="get">
+
+            <input style="width: 500px;" type="text" name="search" placeholder="Search for something">
+            <input style="margin-left: 24%" type="submit" value="Search">
+
+        </form>
+    </div>
        <div class="row">
         @foreach ($product as $products)
 
