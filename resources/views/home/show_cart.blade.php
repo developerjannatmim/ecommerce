@@ -21,6 +21,7 @@
     <link href="home/css/style.css" rel="stylesheet" />
     <!-- responsive style -->
     <link href="home/css/responsive.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
         .center {
@@ -47,6 +48,9 @@
 </head>
 
 <body>
+
+    @include('sweetalert::alert')
+
     <div class="hero_area">
         <!-- header section strats -->
         @include('home.header')
@@ -54,13 +58,7 @@
 
         <div class="main-panel col-12">
             <div class="content-wrapper">
-                @if (session()->has('message'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
 
-                        {{ session()->get('message') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
-                    </div>
-                @endif
 
                 <table class="center">
                     <tr>
@@ -79,12 +77,15 @@
                             <td>{{ $cart->price }}</td>
                             <td><img src="/product/{{ $cart->image }}" alt="" style="margin: auto"
                                     width="100px" height="100px"></td>
-                            <td><a href="{{ url('/remove_cart', $cart->id) }}" class="btn btn-danger"
-                                    onclick="return confirm('Are you sure to remove this product?')">Remove Product</a>
+                            <td><a href="{{ url('/remove_cart', $cart->id) }}" class="btn btn-danger" onclick="confirmation(event)">Remove Product</a>
                             </td>
                         </tr>
+
+                        
                         <?php $totalprice = $totalprice + $cart->price; ?>
+
                     @endforeach
+
                 </table>
             </div>
         </div>
@@ -109,6 +110,33 @@
 
             </p>
         </div>
+        <script>
+            function confirmation(ev) {
+              ev.preventDefault();
+              var urlToRedirect = ev.currentTarget.getAttribute('href');
+              console.log(urlToRedirect);
+              swal({
+                  title: "Are you sure to cancel this product",
+                  text: "You will not be able to revert this!",
+                  icon: "warning",
+                  buttons: true,
+                  dangerMode: true,
+              })
+              .then((willCancel) => {
+                  if (willCancel) {
+
+
+
+                      window.location.href = urlToRedirect;
+
+                  }
+
+
+              });
+
+
+          }
+      </script>
 
         <!-- jQery -->
         <script src="home/js/jquery-3.4.1.min.js"></script>

@@ -20,8 +20,12 @@
       <link href="home/css/style.css" rel="stylesheet" />
       <!-- responsive style -->
       <link href="home/css/responsive.css" rel="stylesheet" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js">
    </head>
    <body>
+
+    @include('sweetalert::alert')
+
       <div class="hero_area">
          <!-- header section strats -->
          @include('home.header')
@@ -44,6 +48,64 @@
       @include('home.product')
       <!-- end product section -->
 
+{{-- comment start here --}}
+
+<div>
+    <h1 style="text-align: center; font-size: 30px; padding: 25px">Comments Here</h1>
+    <form action="{{url('add_comment')}}" method="POST">
+        @csrf
+        <textarea style="height: 15px; width: 500px; margin-left: 600px" name="comment" placeholder="comment something here"></textarea>
+        <br>
+        <input type="submit" value="Comment" class="btn btn-primary">
+    </form>
+</div>
+
+
+  <div style="padding-left: 20%">
+    <h1 style="font-size: 30px; padding-bottom: 20px;">All Comments</h1>
+
+    @foreach ($comment as $comments)
+
+    <div>
+        <b>{{$comments->name}}</b>
+        <p>{{$comments->comment}}</p>
+        <a href="javascript::void(0);" style="color: skyblue" href="" class="btn" onclick="reply(this)" data-Commentid="{{$comments->id}}">Reply</a>
+
+        @foreach ($reply as $user_reply)
+        @if($user_reply->comment_id == $comments->id)
+        <div style="padding-left: 3%; padding-bottom:10px;">
+            <b>{{$user_reply->name}}</b>
+            <p>{{$user_reply->reply}}</p>
+            <a href="javascript::void(0);" style="color: skyblue" href="" class="btn" onclick="reply(this)" data-Commentid="{{$comments->id}}">Reply</a>
+
+        </div>
+        @endif
+
+        @endforeach
+
+    </div>
+
+    @endforeach
+
+
+    {{-- Reply Textbox --}}
+
+    <div style="display: none" class="replyDiv">
+        <form action="{{url('add_reply')}}" method="POST">
+            @csrf
+        <input type="text" id="commentId" name="commentId" hidden="">
+        <textarea style="height: 100px; width: 500px;" placeholder="write something here" name="reply"></textarea>
+        <br>
+        <button type="submit" class="btn btn-warning">Reply</button>
+        <a href="javascript::void(0);" style="color: skyblue" href="" class="btn" onclick="reply_close(this)">Close</a>
+
+    </form>
+    </div>
+
+  </div>
+
+{{-- comment end here --}}
+
       <!-- subscribe section -->
       @include('home.subscribe')
       <!-- end subscribe section -->
@@ -62,6 +124,33 @@
 
          </p>
       </div>
+      <script type="text/javascript">
+
+        function reply(caller)
+        {
+            document.getElementById('commentId').value=$(caller).attr('data-Commentid');
+            $('.replyDiv').insertAfter($(caller));
+            $('.replyDiv').show();
+
+        }
+
+        function reply_close(caller)
+        {
+            $('.replyDiv').hide();
+
+        }
+      </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var scrollpos = localStorage.getItem('scrollpos');
+        if (scrollpos) window.scrollTo(0, scrollpos);
+    });
+
+    window.onbeforeunload = function(e) {
+        localStorage.setItem('scrollpos', window.scrollY);
+    };
+</script>
       <!-- jQery -->
       <script src="home/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->

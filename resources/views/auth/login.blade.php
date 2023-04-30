@@ -43,6 +43,9 @@
                     {{ __('Log in') }}
                 </x-button>
             </div>
+            <div>
+                <a href="{{route('login')}}" style="background-color: skyblue">Login using Google</a>
+            </div>
         </form>
     </x-authentication-card>
 </x-guest-layout>

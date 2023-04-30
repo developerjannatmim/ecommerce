@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GoogleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,16 +18,6 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::middleware([
-
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
 
 
 Route::get('/redirect', [HomeController::class, 'redirect'])->middleware('auth','verified');
@@ -57,3 +48,14 @@ Route::post('stripe/{totalprice}',[HomeController::class, 'stripePost'])->name('
 Route::get('/show_order', [HomeController::class, 'show_order']);
 Route::get('/cancel_order/{id}', [HomeController::class, 'cancel_order']);
 Route::get('/product_search', [HomeController::class, 'product_search']);
+Route::post('/add_comment', [HomeController::class, 'add_comment']);
+Route::post('/add_reply', [HomeController::class, 'add_reply']);
+
+
+
+
+Route::get('auth/google', [GoogleController::class, 'googlepage'])->name('login');
+Route::get('auth/google/callback', [GoogleController::class, 'googlecallback'])->name('callback');
+Route::get('home1', function(){
+    return view('home1');
+})->name('home1');
